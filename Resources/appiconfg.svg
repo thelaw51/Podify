@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="456" height="456" viewBox="0 0 456 456" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <!-- Headphone band -->
+  <path d="M 116 256 Q 116 116 228 116 Q 340 116 340 256"
+        stroke="#FFFFFF" stroke-width="34" fill="none" stroke-linecap="round" />
+  <!-- Left earcup -->
+  <rect x="84" y="240" width="68" height="116" rx="26" fill="#FFFFFF" />
+  <!-- Right earcup -->
+  <rect x="304" y="240" width="68" height="116" rx="26" fill="#FFFFFF" />
+  <!-- Play triangle on left earcup -->
+  <polygon points="108,278 108,322 138,300" fill="#5B21B6" />
+  <!-- Sound bars on right earcup -->
+  <rect x="320" y="278" width="6" height="44" rx="3" fill="#5B21B6" />
+  <rect x="334" y="268" width="6" height="64" rx="3" fill="#5B21B6" />
+  <rect x="348" y="278" width="6" height="44" rx="3" fill="#5B21B6" />
+</svg>

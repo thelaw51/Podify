@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="PodcastApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:PodcastApp.Pages"
+    Shell.FlyoutBehavior="Disabled">
+
+    <TabBar>
+        <Tab Title="Subscribed" Icon="tab_library.svg">
+            <ShellContent ContentTemplate="{DataTemplate pages:SubscriptionsPage}" Route="subscriptions" />
+        </Tab>
+        <Tab Title="Discover" Icon="tab_discover.svg">
+            <ShellContent ContentTemplate="{DataTemplate pages:DiscoverPage}" Route="discover" />
+        </Tab>
+        <Tab Title="Now Playing" Icon="tab_player.svg">
+            <ShellContent ContentTemplate="{DataTemplate pages:PlayerPage}" Route="player" />
+        </Tab>
+    </TabBar>
+</Shell>

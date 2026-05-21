@@ -1,0 +1,92 @@
+# Build output
+bin/
+obj/
+out/
+publish/
+*.user
+*.userprefs
+*.suo
+*.userosscache
+*.sln.docstates
+*.vsix
+
+# .NET artifacts
+*.dll
+*.exe
+*.pdb
+*.dbmdl
+*.dbproj.schemaview
+*.jfm
+*.pfx
+*.publishsettings
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Mono/Xamarin/MAUI
+*.pidb
+*.userprefs
+mono_crash.*
+*.binlog
+xcuserdata/
+*.xcworkspace
+*.xcodeproj
+Platforms/iOS/bin/
+Platforms/Android/bin/
+Platforms/MacCatalyst/bin/
+Platforms/Windows/bin/
+
+# Rider / JetBrains
+.idea/
+*.iml
+*.sln.iml
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.sln.docstates
+Generated\ Files/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+
+# Logs
+*.log
+logs/
+
+# NuGet
+*.nuget.props
+*.nuget.targets
+packages/
+!packages/build/
+.nuget/
+
+# Test results
+TestResults/
+[Cc]overage*/
+*.coverage
+*.coveragexml
+
+# Local database/secrets (the app stores its SQLite DB in FileSystem.AppDataDirectory
+# at runtime, not in the repo, but just in case)
+*.db3
+*.db
+*.sqlite
+*.sqlite3
+appsettings.Development.json
+secrets.json

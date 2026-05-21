@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PodcastApp.Pages.DiscoverPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:PodcastApp.ViewModels"
+    xmlns:services="clr-namespace:PodcastApp.Services"
+    x:DataType="vm:DiscoverViewModel"
+    Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <!-- Header -->
+        <VerticalStackLayout Grid.Row="0" Padding="20,16,20,4" Spacing="2">
+            <Label Style="{StaticResource Eyebrow}" Text="Explore" />
+            <Label Style="{StaticResource Display}" Text="Discover" />
+        </VerticalStackLayout>
+
+        <!-- Search -->
+        <Border Grid.Row="1" Margin="20,8,20,8" Padding="4"
+                StrokeShape="RoundRectangle 14"
+                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceMuted}, Dark={StaticResource SurfaceMutedDark}}">
+            <SearchBar Placeholder="Search shows, hosts, topics…"
+                       BackgroundColor="Transparent"
+                       Text="{Binding Query}"
+                       SearchCommand="{Binding SearchCommand}" />
+        </Border>
+
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout Spacing="24" Padding="0,4,0,32">
+
+                <!-- Featured rows (one carousel per category) -->
+                <VerticalStackLayout Spacing="28" IsVisible="{Binding HasSearchResults, Converter={StaticResource InverseBool}}">
+                    <BindableLayout.ItemsSource>
+                        <Binding Path="FeaturedRows" />
+                    </BindableLayout.ItemsSource>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:FeaturedRow">
+                            <VerticalStackLayout Spacing="10">
+                                <Grid Margin="20,0" ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Style="{StaticResource H1}" Text="{Binding Header}" />
+                                    <ActivityIndicator Grid.Column="1" IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
+                                </Grid>
+                                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                                    <HorizontalStackLayout Padding="20,0" Spacing="14">
+                                        <BindableLayout.ItemsSource>
+                                            <Binding Path="Items" />
+                                        </BindableLayout.ItemsSource>
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:DiscoverItem">
+                                                <Grid WidthRequest="148"
+                                                      RowDefinitions="148,40,18,Auto"
+                                                      RowSpacing="6">
+                                                    <Border Grid.Row="0" Style="{StaticResource ArtworkBorder}" HeightRequest="148" WidthRequest="148">
+                                                        <Image Source="{Binding ArtworkUrl}" Aspect="AspectFill" />
+                                                    </Border>
+                                                    <Label Grid.Row="1"
+                                                           Style="{StaticResource H2}"
+                                                           Text="{Binding CollectionName}"
+                                                           LineBreakMode="TailTruncation" MaxLines="2"
+                                                           FontSize="14"
+                                                           VerticalTextAlignment="Start" />
+                                                    <Label Grid.Row="2"
+                                                           Style="{StaticResource Caption}"
+                                                           Text="{Binding ArtistName}"
+                                                           LineBreakMode="TailTruncation" MaxLines="1"
+                                                           VerticalTextAlignment="Start" />
+                                                    <Button Grid.Row="3"
+                                                            Style="{StaticResource SubtleButton}"
+                                                            Text="{Binding SubscribeLabel}"
+                                                            IsEnabled="{Binding IsSubscribed, Converter={StaticResource InverseBool}}"
+                                                            FontSize="12"
+                                                            HeightRequest="32"
+                                                            MinimumHeightRequest="32"
+                                                            Padding="12,0"
+                                                            Margin="0,6,0,0"
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DiscoverViewModel}}, Path=SubscribeCommand}"
+                                                            CommandParameter="{Binding .}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </HorizontalStackLayout>
+                                </ScrollView>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- All categories chip grid -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding HasSearchResults, Converter={StaticResource InverseBool}}">
+                    <Label Style="{StaticResource H1}" Margin="20,0" Text="Browse all categories" />
+                    <FlexLayout Direction="Row"
+                                Wrap="Wrap"
+                                JustifyContent="Start"
+                                Margin="14,0"
+                                BindableLayout.ItemsSource="{Binding AllCategories}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="services:PodcastCategory">
+                                <Border Style="{StaticResource CategoryChip}" Margin="6" MinimumWidthRequest="0" HeightRequest="44" Padding="14,8">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DiscoverViewModel}}, Path=ShowCategoryCommand}" CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                                        <Label Text="{Binding Emoji}" FontSize="18" VerticalOptions="Center" />
+                                        <Label Style="{StaticResource H2}" Text="{Binding Name}" FontSize="14" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                </VerticalStackLayout>
+
+                <!-- Search results -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding HasSearchResults}">
+                    <Grid Margin="20,0" ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0" Style="{StaticResource H1}" Text="Search results" />
+                        <Button Grid.Column="1" Style="{StaticResource SubtleButton}" Text="Clear" Command="{Binding ClearSearchCommand}" />
+                    </Grid>
+                    <ActivityIndicator IsRunning="{Binding IsSearching}" IsVisible="{Binding IsSearching}" />
+                    <VerticalStackLayout Padding="20,0" Spacing="12">
+                        <BindableLayout.ItemsSource>
+                            <Binding Path="Results" />
+                        </BindableLayout.ItemsSource>
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:DiscoverItem">
+                                <Grid Padding="0" ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
+                                    <Border Grid.Column="0" Style="{StaticResource ArtworkBorder}" HeightRequest="64" WidthRequest="64">
+                                        <Image Source="{Binding ArtworkUrl}" Aspect="AspectFill" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                        <Label Style="{StaticResource H2}" Text="{Binding CollectionName}" FontSize="15" LineBreakMode="TailTruncation" />
+                                        <Label Style="{StaticResource Caption}" Text="{Binding ArtistName}" LineBreakMode="TailTruncation" />
+                                    </VerticalStackLayout>
+                                    <Button Grid.Column="2"
+                                            Style="{StaticResource GhostButton}"
+                                            Text="{Binding SubscribeLabel}"
+                                            IsEnabled="{Binding IsSubscribed, Converter={StaticResource InverseBool}}"
+                                            VerticalOptions="Center"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DiscoverViewModel}}, Path=SubscribeCommand}"
+                                            CommandParameter="{Binding .}" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

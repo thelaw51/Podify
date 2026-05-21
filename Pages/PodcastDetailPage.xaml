@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PodcastApp.Pages.PodcastDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:PodcastApp.ViewModels"
+    xmlns:m="clr-namespace:PodcastApp.Models"
+    x:DataType="vm:PodcastDetailViewModel"
+    Title="{Binding Podcast.Title}">
+
+    <CollectionView ItemsSource="{Binding Episodes}" SelectionMode="None">
+        <CollectionView.Header>
+            <VerticalStackLayout Spacing="14" Padding="20,12,20,20">
+                <Grid ColumnDefinitions="120,*" ColumnSpacing="16">
+                    <Border Grid.Column="0" Style="{StaticResource ArtworkBorder}" HeightRequest="120" WidthRequest="120">
+                        <Image Source="{Binding Podcast.ArtworkUrl}" Aspect="AspectFill" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="6">
+                        <Label Style="{StaticResource Eyebrow}" Text="Podcast" />
+                        <Label Style="{StaticResource H1}" Text="{Binding Podcast.Title}" LineBreakMode="TailTruncation" MaxLines="3" />
+                        <Label Style="{StaticResource Caption}" Text="{Binding Podcast.Author}" LineBreakMode="TailTruncation" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Label Style="{StaticResource Body}"
+                       Text="{Binding Podcast.Description}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}"
+                       MaxLines="5" LineBreakMode="TailTruncation" />
+                <Label Style="{StaticResource H2}" Text="Episodes" Margin="0,8,0,0" />
+            </VerticalStackLayout>
+        </CollectionView.Header>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="m:Episode">
+                <Border Style="{StaticResource Card}" Margin="16,4,16,8" Padding="14">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Style="{StaticResource Caption}" Text="{Binding Published, StringFormat='{0:MMM d, yyyy}'}" />
+                        <Label Style="{StaticResource H2}" Text="{Binding Title}" LineBreakMode="TailTruncation" MaxLines="2" />
+                        <Label Style="{StaticResource Caption}"
+                               Text="{Binding Description}"
+                               MaxLines="3" LineBreakMode="TailTruncation" />
+                        <HorizontalStackLayout Spacing="8" Margin="0,4,0,0">
+                            <Button Text="▶  Play"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PodcastDetailViewModel}}, Path=PlayCommand}"
+                                    CommandParameter="{Binding .}" />
+                            <Button Style="{StaticResource SubtleButton}"
+                                    Text="Queue"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PodcastDetailViewModel}}, Path=ToggleQueueCommand}"
+                                    CommandParameter="{Binding .}" />
+                            <Button Style="{StaticResource SubtleButton}"
+                                    Text="Download"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PodcastDetailViewModel}}, Path=DownloadCommand}"
+                                    CommandParameter="{Binding .}" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+        <CollectionView.Footer>
+            <BoxView HeightRequest="40" Color="Transparent" />
+        </CollectionView.Footer>
+    </CollectionView>
+</ContentPage>
