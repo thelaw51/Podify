@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\joe\\\\source\\\\repos\\\\Podcast-App\" -Recurse -Directory)",
+      "Bash(Select-Object FullName)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\joe\\\\source\\\\repos\\\\Podcast-App\\\\Models\")",
+      "Bash(Select-Object Name)"
+    ]
+  }
+}
