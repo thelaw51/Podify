@@ -1,6 +1,6 @@
-using PodcastApp.Services;
+using Podify.Services;
 
-namespace PodcastApp;
+namespace Podify;
 
 public partial class App : Application
 {

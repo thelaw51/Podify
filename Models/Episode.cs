@@ -1,6 +1,6 @@
 using SQLite;
 
-namespace PodcastApp.Models;
+namespace Podify.Models;
 
 public class Episode
 {

@@ -1,6 +1,6 @@
-using PodcastApp.ViewModels;
+using Podify.ViewModels;
 
-namespace PodcastApp.Pages;
+namespace Podify.Pages;
 
 public partial class PlayerPage : ContentPage
 {

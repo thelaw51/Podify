@@ -4,7 +4,11 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\joe\\\\source\\\\repos\\\\Podcast-App\" -Recurse -Directory)",
       "Bash(Select-Object FullName)",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\joe\\\\source\\\\repos\\\\Podcast-App\\\\Models\")",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Bash(awk '{print $1}')",
+      "Bash(xargs -r kill)",
+      "Bash(dotnet build *)",
+      "Bash(open /Users/joegillard/repos/Podcast-App/bin/Debug/net10.0-maccatalyst/maccatalyst-arm64/Podify.app)"
     ]
   }
 }

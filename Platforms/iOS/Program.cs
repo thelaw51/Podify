@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace PodcastApp;
+namespace Podify;
 
 public class Program
 {

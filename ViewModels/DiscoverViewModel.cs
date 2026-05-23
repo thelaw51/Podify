@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PodcastApp.Services;
+using Podify.Services;
 
-namespace PodcastApp.ViewModels;
+namespace Podify.ViewModels;
 
 public partial class DiscoverItem : ObservableObject
 {

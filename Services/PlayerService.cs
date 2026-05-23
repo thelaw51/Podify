@@ -1,9 +1,9 @@
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Views;
-using PodcastApp.Models;
+using Podify.Models;
 
-namespace PodcastApp.Services;
+namespace Podify.Services;
 
 public class PlayerService
 {

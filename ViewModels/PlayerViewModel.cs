@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PodcastApp.Models;
-using PodcastApp.Services;
+using Podify.Models;
+using Podify.Services;
 
-namespace PodcastApp.ViewModels;
+namespace Podify.ViewModels;
 
 public partial class PlayerViewModel : ObservableObject, IDisposable
 {

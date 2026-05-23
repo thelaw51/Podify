@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 
-namespace PodcastApp.Services;
+namespace Podify.Services;
 
 public record PodcastCategory(int Id, string Name, string Emoji);
 

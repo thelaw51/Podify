@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="PodcastApp.Pages.PodcastDetailPage"
+    x:Class="Podify.Pages.PodcastDetailPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vm="clr-namespace:PodcastApp.ViewModels"
-    xmlns:m="clr-namespace:PodcastApp.Models"
+    xmlns:vm="clr-namespace:Podify.ViewModels"
+    xmlns:m="clr-namespace:Podify.Models"
     x:DataType="vm:PodcastDetailViewModel"
     Title="{Binding Podcast.Title}">
 

@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace PodcastApp.Services;
+namespace Podify.Services;
 
 public record OpmlEntry(string Title, string FeedUrl);
 

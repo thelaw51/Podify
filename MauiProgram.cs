@@ -1,13 +1,13 @@
 using CommunityToolkit.Maui;
-using PodcastApp.Pages;
-using PodcastApp.Services;
-using PodcastApp.ViewModels;
+using Podify.Pages;
+using Podify.Services;
+using Podify.ViewModels;
 #if IOS || MACCATALYST
 using UIKit;
 using Microsoft.Maui.Handlers;
 #endif
 
-namespace PodcastApp;
+namespace Podify;
 
 public static class MauiProgram
 {
@@ -64,7 +64,7 @@ public static class MauiProgram
             {
                 Timeout = TimeSpan.FromSeconds(60)
             };
-            http.DefaultRequestHeaders.UserAgent.ParseAdd("PodcastApp/0.1");
+            http.DefaultRequestHeaders.UserAgent.ParseAdd("Podify/0.1");
             return http;
         });
 

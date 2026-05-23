@@ -1,6 +1,6 @@
-using PodcastApp.Pages;
+using Podify.Pages;
 
-namespace PodcastApp;
+namespace Podify;
 
 public partial class AppShell : Shell
 {

@@ -1,7 +1,7 @@
-using PodcastApp.Models;
+using Podify.Models;
 using SQLite;
 
-namespace PodcastApp.Services;
+namespace Podify.Services;
 
 public class PodcastDatabase
 {

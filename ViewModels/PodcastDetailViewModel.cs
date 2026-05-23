@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PodcastApp.Models;
-using PodcastApp.Services;
+using Podify.Models;
+using Podify.Services;
 
-namespace PodcastApp.ViewModels;
+namespace Podify.ViewModels;
 
 [QueryProperty(nameof(PodcastId), "id")]
 public partial class PodcastDetailViewModel : ObservableObject

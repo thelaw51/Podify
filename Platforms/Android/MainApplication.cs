@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace PodcastApp;
+namespace Podify;
 
 [Application]
 public class MainApplication : MauiApplication

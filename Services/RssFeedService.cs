@@ -2,9 +2,9 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
-using PodcastApp.Models;
+using Podify.Models;
 
-namespace PodcastApp.Services;
+namespace Podify.Services;
 
 public class RssFeedService
 {

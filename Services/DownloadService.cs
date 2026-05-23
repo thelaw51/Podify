@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
-using PodcastApp.Models;
+using Podify.Models;
 
-namespace PodcastApp.Services;
+namespace Podify.Services;
 
 public class DownloadService
 {

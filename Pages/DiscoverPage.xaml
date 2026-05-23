@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="PodcastApp.Pages.DiscoverPage"
+    x:Class="Podify.Pages.DiscoverPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vm="clr-namespace:PodcastApp.ViewModels"
-    xmlns:services="clr-namespace:PodcastApp.Services"
+    xmlns:vm="clr-namespace:Podify.ViewModels"
+    xmlns:services="clr-namespace:Podify.Services"
     x:DataType="vm:DiscoverViewModel"
     Shell.NavBarIsVisible="False">
 
@@ -52,7 +52,7 @@
                                                       RowDefinitions="148,40,18,Auto"
                                                       RowSpacing="6">
                                                     <Border Grid.Row="0" Style="{StaticResource ArtworkBorder}" HeightRequest="148" WidthRequest="148">
-                                                        <Image Source="{Binding ArtworkUrl}" Aspect="AspectFill" />
+                                                        <Image Source="{Binding ArtworkUrl}" Aspect="AspectFill" HeightRequest="148" WidthRequest="148" />
                                                     </Border>
                                                     <Label Grid.Row="1"
                                                            Style="{StaticResource H2}"
@@ -125,7 +125,7 @@
                             <DataTemplate x:DataType="vm:DiscoverItem">
                                 <Grid Padding="0" ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
                                     <Border Grid.Column="0" Style="{StaticResource ArtworkBorder}" HeightRequest="64" WidthRequest="64">
-                                        <Image Source="{Binding ArtworkUrl}" Aspect="AspectFill" />
+                                        <Image Source="{Binding ArtworkUrl}" Aspect="AspectFill" HeightRequest="64" WidthRequest="64" />
                                     </Border>
                                     <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
                                         <Label Style="{StaticResource H2}" Text="{Binding CollectionName}" FontSize="15" LineBreakMode="TailTruncation" />

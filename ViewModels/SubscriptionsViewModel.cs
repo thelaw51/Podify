@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PodcastApp.Models;
-using PodcastApp.Services;
+using Podify.Models;
+using Podify.Services;
 
-namespace PodcastApp.ViewModels;
+namespace Podify.ViewModels;
 
 public class InProgressItem
 {
@@ -69,6 +69,9 @@ public partial class SubscriptionsViewModel : ObservableObject
    [ObservableProperty] private string _importStatus = string.Empty;
    public bool HasSubscriptions => Subscriptions.Count > 0;
 
+   private DateTime _lastAutoRefresh = DateTime.MinValue;
+   private static readonly TimeSpan AutoRefreshInterval = TimeSpan.FromMinutes(5);
+
    public SubscriptionsViewModel(PodcastDatabase db, RssFeedService rss, OpmlImportService opml, PlayerService player)
    {
       _db = db;
@@ -120,11 +123,19 @@ public partial class SubscriptionsViewModel : ObservableObject
       await _player.PlayAsync(item.Episode);
    }
 
+   public async Task AutoRefreshOnAppearAsync()
+   {
+      if (IsRefreshing) return;
+      if (DateTime.UtcNow - _lastAutoRefresh < AutoRefreshInterval) return;
+      await RefreshAllAsync();
+   }
+
    [RelayCommand]
    public async Task RefreshAllAsync()
    {
       if (IsRefreshing) return;
       IsRefreshing = true;
+      _lastAutoRefresh = DateTime.UtcNow;
       try
       {
          foreach (var pod in Subscriptions.ToList())
