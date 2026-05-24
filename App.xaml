@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:local="clr-namespace:Podify"
+             xmlns:helpers="clr-namespace:Podify.Helpers"
              x:Class="Podify.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -12,6 +13,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <toolkit:InvertedBoolConverter x:Key="InverseBool" />
+            <helpers:HtmlToPlainTextConverter x:Key="HtmlToPlainText" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
