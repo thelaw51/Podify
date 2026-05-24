@@ -4,20 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build & Run
 
-**Prerequisites:** .NET 10 SDK + `dotnet workload install maui`
+**Prerequisites:** .NET 10 SDK + `dotnet workload install maui`. iOS / Mac Catalyst require Xcode.
 
-```powershell
+```bash
 # Build per platform
-dotnet build -f net10.0-windows10.0.19041.0   # Windows
+dotnet build -f net10.0-maccatalyst            # macOS
+dotnet build -f net10.0-ios                    # iOS
 dotnet build -f net10.0-android                # Android
-dotnet build -f net10.0-ios                    # iOS (requires Xcode)
-dotnet build -f net10.0-maccatalyst           # macOS
+dotnet build -f net10.0-windows10.0.19041.0    # Windows (host must be Windows — gated in csproj)
 
 # Run (example: macOS)
 dotnet build -t:Run -f net10.0-maccatalyst
 ```
 
-No test project exists yet.
+No test project exists yet. See `Podify.csproj` for the full package list (MAUI 10.0.60, CommunityToolkit.Maui[.MediaElement], CommunityToolkit.Mvvm, sqlite-net-pcl).
 
 ## Architecture
 
