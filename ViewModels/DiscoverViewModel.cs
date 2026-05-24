@@ -209,4 +209,22 @@ public partial class DiscoverViewModel : ObservableObject
             await Shell.Current.DisplayAlertAsync("Subscribe failed", ex.Message, "OK");
         }
     }
+
+    [RelayCommand]
+    public async Task OpenDiscoverItemAsync(DiscoverItem item)
+    {
+        if (item is null || string.IsNullOrWhiteSpace(item.FeedUrl)) return;
+        if (item.IsSubscribed)
+        {
+            var subs = await _db.GetSubscriptionsAsync();
+            var existing = subs.FirstOrDefault(s => string.Equals(s.FeedUrl, item.FeedUrl, StringComparison.OrdinalIgnoreCase));
+            if (existing is null) return;
+            await Shell.Current.GoToAsync($"podcast?id={existing.Id}");
+        }
+        else
+        {
+            var encoded = Uri.EscapeDataString(item.FeedUrl);
+            await Shell.Current.GoToAsync($"podcast?feed={encoded}");
+        }
+    }
 }
