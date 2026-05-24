@@ -18,6 +18,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private string _artworkUrl = string.Empty;
 
     [ObservableProperty]
+    private string _podcastTitle = string.Empty;
+
+    [ObservableProperty]
     private bool _isPlaying;
 
     [ObservableProperty]
@@ -36,9 +39,15 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private CancellationTokenSource? _scrubCts;
 
     public string PlayPauseLabel => IsPlaying ? "Pause" : "Play";
+    public string PlayPauseGlyph => IsPlaying ? "" : ""; // pause / play_arrow
+    public string SpeedLabel => $"{Speed:0.##}×";
     public bool HasArtwork => !string.IsNullOrWhiteSpace(ArtworkUrl);
+    public string CurrentChapterTitle => _player.CurrentChapter?.Title ?? string.Empty;
+    public bool HasChapter => _player.CurrentChapter is not null;
 
     partial void OnArtworkUrlChanged(string value) => OnPropertyChanged(nameof(HasArtwork));
+    partial void OnIsPlayingChanged(bool value) => OnPropertyChanged(nameof(PlayPauseGlyph));
+    partial void OnSpeedChanged(double value) => OnPropertyChanged(nameof(SpeedLabel));
 
     public PlayerService Player => _player;
 
@@ -65,6 +74,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
                 _applyingFromPlayer = false;
             }
             Speed = _player.Speed;
+            OnPropertyChanged(nameof(CurrentChapterTitle));
+            OnPropertyChanged(nameof(HasChapter));
             _ = ResolveArtworkAsync();
         });
     }
@@ -113,13 +124,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         if (_resolvedForEpisodeId == ep.Id) return;
         _resolvedForEpisodeId = ep.Id;
 
-        if (!string.IsNullOrWhiteSpace(ep.ArtworkUrl))
-        {
-            ArtworkUrl = ep.ArtworkUrl;
-            return;
-        }
         var pod = await _db.GetPodcastAsync(ep.PodcastId);
-        ArtworkUrl = pod?.ArtworkUrl ?? string.Empty;
+        PodcastTitle = pod?.Title ?? string.Empty;
+        ArtworkUrl = !string.IsNullOrWhiteSpace(ep.ArtworkUrl) ? ep.ArtworkUrl : pod?.ArtworkUrl ?? string.Empty;
     }
 
     [RelayCommand]

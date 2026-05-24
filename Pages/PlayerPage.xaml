@@ -5,18 +5,29 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Podify.ViewModels"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     x:DataType="vm:PlayerViewModel"
-    Shell.NavBarIsVisible="False">
+    Shell.NavBarIsVisible="False"
+    ios:Page.UseSafeArea="False">
 
-    <Grid RowDefinitions="Auto,*,Auto,Auto,Auto,Auto" Padding="20,24,20,32" RowSpacing="20">
+    <ContentPage.Resources>
+        <Style x:Key="SkipButton" TargetType="Button">
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontFamily" Value="OpenSansSemibold" />
+            <Setter Property="Padding" Value="4" />
+            <Setter Property="WidthRequest" Value="60" />
+            <Setter Property="HeightRequest" Value="60" />
+            <Setter Property="ContentLayout" Value="Top, 0" />
+            <Setter Property="CornerRadius" Value="30" />
+        </Style>
+    </ContentPage.Resources>
 
-        <!-- Header label -->
-        <VerticalStackLayout Grid.Row="0" Spacing="2">
-            <Label Style="{StaticResource Eyebrow}" Text="Now Playing" />
-        </VerticalStackLayout>
+    <Grid RowDefinitions="*,Auto,Auto,Auto,Auto" Padding="20,24,20,100" RowSpacing="22">
 
         <!-- Artwork hero -->
-        <Border Grid.Row="1"
+        <Border Grid.Row="0"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 MaximumWidthRequest="320"
@@ -27,21 +38,32 @@
         </Border>
 
         <!-- Empty-state placeholder -->
-        <VerticalStackLayout Grid.Row="1" VerticalOptions="Center" HorizontalOptions="Center" Spacing="10"
+        <VerticalStackLayout Grid.Row="0" VerticalOptions="Center" HorizontalOptions="Center" Spacing="10"
                              IsVisible="{Binding HasArtwork, Converter={StaticResource InverseBool}}">
             <Label Text="🎙️" FontSize="64" HorizontalOptions="Center" />
             <Label Style="{StaticResource Caption}" Text="Pick an episode to start listening" HorizontalOptions="Center" />
         </VerticalStackLayout>
 
-        <!-- Title + author -->
-        <VerticalStackLayout Grid.Row="2" Spacing="6">
+        <!-- Title + podcast subtitle -->
+        <VerticalStackLayout Grid.Row="1" Spacing="4">
             <Label Style="{StaticResource H1}"
                    Text="{Binding Current.Title, FallbackValue='Nothing playing'}"
                    HorizontalTextAlignment="Center" LineBreakMode="WordWrap" MaxLines="2" />
+            <Label Style="{StaticResource Caption}"
+                   Text="{Binding PodcastTitle}"
+                   HorizontalTextAlignment="Center"
+                   LineBreakMode="TailTruncation"
+                   IsVisible="{Binding HasArtwork}" />
+            <Label Style="{StaticResource Caption}"
+                   Text="{Binding CurrentChapterTitle}"
+                   HorizontalTextAlignment="Center"
+                   LineBreakMode="TailTruncation"
+                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                   IsVisible="{Binding HasChapter}" />
         </VerticalStackLayout>
 
         <!-- Scrub + times -->
-        <VerticalStackLayout Grid.Row="3" Spacing="2">
+        <VerticalStackLayout Grid.Row="2" Spacing="2">
             <Slider x:Name="ScrubSlider"
                     Minimum="0"
                     Maximum="{Binding Duration.TotalSeconds, FallbackValue=1}"
@@ -52,25 +74,51 @@
             </Grid>
         </VerticalStackLayout>
 
-        <!-- Transport row -->
-        <Grid Grid.Row="4" ColumnDefinitions="*,*,Auto,*,*" ColumnSpacing="8" VerticalOptions="Center">
-            <Button Grid.Column="0" Style="{StaticResource SubtleButton}"
-                    Text="{Binding Speed, StringFormat='{0:0.00}x'}"
+        <!-- Transport row: [Speed | spacer | SkipBack | Play | SkipForward | spacer] -->
+        <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto,Auto,*" ColumnSpacing="14" VerticalOptions="Center">
+            <Button Grid.Column="0"
+                    Style="{StaticResource SubtleButton}"
+                    Text="{Binding SpeedLabel}"
+                    HorizontalOptions="Start"
                     Command="{Binding CycleSpeedCommand}" />
-            <Button Grid.Column="1" Style="{StaticResource IconButton}"
-                    Text="−15s"
-                    FontSize="14"
-                    Command="{Binding SkipBackCommand}" />
-            <Button Grid.Column="2" Style="{StaticResource PrimaryPlayButton}"
-                    Text="{Binding PlayPauseLabel}"
-                    Command="{Binding TogglePlayPauseCommand}" />
-            <Button Grid.Column="3" Style="{StaticResource IconButton}"
-                    Text="+30s"
-                    FontSize="14"
-                    Command="{Binding SkipForwardCommand}" />
-            <BoxView Grid.Column="4" Color="Transparent" />
+
+            <Button Grid.Column="1"
+                    Style="{StaticResource SkipButton}"
+                    Text="15"
+                    Command="{Binding SkipBackCommand}">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="MaterialIcons"
+                                     Glyph="&#xE042;"
+                                     Size="22"
+                                     Color="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}" />
+                </Button.ImageSource>
+            </Button>
+
+            <Button Grid.Column="2"
+                    Style="{StaticResource PrimaryPlayButton}"
+                    Text=""
+                    Command="{Binding TogglePlayPauseCommand}">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="MaterialIcons"
+                                     Glyph="{Binding PlayPauseGlyph}"
+                                     Size="34"
+                                     Color="{StaticResource PrimaryOn}" />
+                </Button.ImageSource>
+            </Button>
+
+            <Button Grid.Column="3"
+                    Style="{StaticResource SkipButton}"
+                    Text="30"
+                    Command="{Binding SkipForwardCommand}">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="MaterialIcons"
+                                     Glyph="&#xE01F;"
+                                     Size="22"
+                                     Color="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}" />
+                </Button.ImageSource>
+            </Button>
         </Grid>
 
-        <toolkit:MediaElement Grid.Row="5" x:Name="Media" IsVisible="False" HeightRequest="0" />
+        <toolkit:MediaElement Grid.Row="4" x:Name="Media" IsVisible="False" HeightRequest="0" />
     </Grid>
 </ContentPage>
