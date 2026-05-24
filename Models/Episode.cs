@@ -22,6 +22,7 @@ public class Episode
     public string? LocalFilePath { get; set; }
     public DownloadStatus DownloadStatus { get; set; }
     public int QueuePosition { get; set; } = -1;
+    public string? ChaptersJson { get; set; }
 }
 
 public enum DownloadStatus

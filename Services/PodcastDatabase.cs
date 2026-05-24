@@ -76,6 +76,7 @@ public class PodcastDatabase
                existing.ArtworkUrl = ep.ArtworkUrl;
                existing.Published = ep.Published;
                existing.Duration = ep.Duration;
+               if (ep.ChaptersJson is not null) existing.ChaptersJson = ep.ChaptersJson;
                tx.Update(existing);
             }
          }

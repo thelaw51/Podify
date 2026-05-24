@@ -22,6 +22,7 @@ public static class MauiProgram
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
             });
 
 #if IOS || MACCATALYST
@@ -80,11 +81,13 @@ public static class MauiProgram
         builder.Services.AddSingleton<DiscoverViewModel>();
         builder.Services.AddSingleton<PlayerViewModel>();
         builder.Services.AddTransient<PodcastDetailViewModel>();
+        builder.Services.AddTransient<EpisodeDetailViewModel>();
 
         builder.Services.AddSingleton<SubscriptionsPage>();
         builder.Services.AddSingleton<DiscoverPage>();
         builder.Services.AddSingleton<PlayerPage>();
         builder.Services.AddTransient<PodcastDetailPage>();
+        builder.Services.AddTransient<EpisodeDetailPage>();
 
         return builder.Build();
     }

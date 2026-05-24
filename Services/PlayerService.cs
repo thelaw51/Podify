@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Views;
@@ -15,8 +16,12 @@ public class PlayerService
     private TimeSpan _resumePosition = TimeSpan.Zero;
     private DateTime _lastPositionSaveAt = DateTime.MinValue;
     private static readonly TimeSpan SavePositionInterval = TimeSpan.FromSeconds(5);
+    private IReadOnlyList<Chapter> _chapters = Array.Empty<Chapter>();
+    private Chapter? _currentChapter;
 
     public event EventHandler? StateChanged;
+    public IReadOnlyList<Chapter> Chapters => _chapters;
+    public Chapter? CurrentChapter => _currentChapter;
 
     public PlayerService(PodcastDatabase db)
     {
@@ -83,6 +88,8 @@ public class PlayerService
         }
 
         _current = episode;
+        _chapters = LoadChapters(episode);
+        _currentChapter = null;
         _resumePosition = episode.PlayPosition > TimeSpan.FromSeconds(2) ? episode.PlayPosition : TimeSpan.Zero;
 
         var source = !string.IsNullOrWhiteSpace(episode.LocalFilePath) && File.Exists(episode.LocalFilePath)
@@ -146,10 +153,17 @@ public class PlayerService
         {
             await SaveCurrentPositionAsync();
         }
+        else if (e.NewState == MediaElementState.Playing && _resumePosition > TimeSpan.Zero && _media is not null)
+        {
+            var target = _resumePosition;
+            _resumePosition = TimeSpan.Zero;
+            await _media.SeekTo(target);
+        }
     }
 
     private async void OnMediaPositionChanged(object? sender, MediaPositionChangedEventArgs e)
     {
+        UpdateCurrentChapter(e.Position);
         StateChanged?.Invoke(this, EventArgs.Empty);
 
         if (_media?.CurrentState != MediaElementState.Playing) return;
@@ -157,6 +171,37 @@ public class PlayerService
         if (now - _lastPositionSaveAt < SavePositionInterval) return;
         _lastPositionSaveAt = now;
         await SaveCurrentPositionAsync();
+    }
+
+    public Task SeekToChapterAsync(Chapter chapter) => SeekToAsync(chapter.Start);
+
+    private void UpdateCurrentChapter(TimeSpan position)
+    {
+        if (_chapters.Count == 0)
+        {
+            _currentChapter = null;
+            return;
+        }
+        Chapter? match = null;
+        foreach (var ch in _chapters)
+        {
+            if (ch.Start <= position) match = ch;
+            else break;
+        }
+        _currentChapter = match;
+    }
+
+    private static IReadOnlyList<Chapter> LoadChapters(Episode episode)
+    {
+        if (string.IsNullOrWhiteSpace(episode.ChaptersJson)) return Array.Empty<Chapter>();
+        try
+        {
+            return JsonSerializer.Deserialize<List<Chapter>>(episode.ChaptersJson) ?? (IReadOnlyList<Chapter>)Array.Empty<Chapter>();
+        }
+        catch
+        {
+            return Array.Empty<Chapter>();
+        }
     }
 
     public async Task SaveCurrentPositionAsync()
@@ -172,11 +217,21 @@ public class PlayerService
     private async void OnMediaEnded(object? sender, EventArgs e)
     {
         if (_current is null) return;
-        _current.IsPlayed = true;
-        _current.PlayPosition = TimeSpan.Zero;
-        _current.QueuePosition = -1;
-        await _db.UpdateEpisodeAsync(_current);
+        await MarkPlayedAsync(_current, true);
         await PlayNextFromQueueAsync();
+    }
+
+    public async Task MarkPlayedAsync(Episode episode, bool played)
+    {
+        episode.IsPlayed = played;
+        if (played)
+        {
+            episode.PlayPosition = TimeSpan.Zero;
+            episode.QueuePosition = -1;
+            episode.LastPlayedAt = DateTime.UtcNow;
+        }
+        await _db.UpdateEpisodeAsync(episode);
+        StateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private async Task PlayNextFromQueueAsync()

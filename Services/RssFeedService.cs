@@ -1,7 +1,9 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Xml.Linq;
+using Podify.Helpers;
 using Podify.Models;
 
 namespace Podify.Services;
@@ -67,6 +69,9 @@ public class RssFeedService
             var duration = ParseDuration(item.Element(ItunesNs + "duration")?.Value);
             var epArtwork = item.Element(ItunesNs + "image")?.Attribute("href")?.Value ?? string.Empty;
 
+            var chapters = PscParser.Parse(item);
+            var chaptersJson = chapters.Count > 0 ? JsonSerializer.Serialize(chapters) : null;
+
             episodes.Add(new Episode
             {
                 Id = episodeId,
@@ -80,7 +85,8 @@ public class RssFeedService
                 PlayPosition = TimeSpan.Zero,
                 IsPlayed = false,
                 DownloadStatus = DownloadStatus.NotDownloaded,
-                QueuePosition = -1
+                QueuePosition = -1,
+                ChaptersJson = chaptersJson
             });
         }
 
