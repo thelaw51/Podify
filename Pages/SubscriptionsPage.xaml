@@ -6,8 +6,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Podify.ViewModels"
     xmlns:m="clr-namespace:Podify.Models"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     x:DataType="vm:SubscriptionsViewModel"
-    Shell.NavBarIsVisible="False">
+    Shell.NavBarIsVisible="False"
+    ios:Page.UseSafeArea="False">
 
     <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshAllCommand}">
         <CollectionView ItemsSource="{Binding Subscriptions}" SelectionMode="None"
@@ -175,11 +177,26 @@
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SubscriptionsViewModel}}, Path=OpenPodcastCommand}"
                                                     CommandParameter="{Binding .}" />
                                             </Grid.GestureRecognizers>
-                                            <Border Grid.Row="0" Style="{StaticResource ArtworkBorder}"
-                                                    HeightRequest="148" WidthRequest="148">
-                                                <Image Source="{Binding ArtworkUrl}" Aspect="AspectFill"
-                                                       HeightRequest="148" WidthRequest="148" />
-                                            </Border>
+                                            <Grid Grid.Row="0" HeightRequest="148" WidthRequest="148">
+                                                <Border Style="{StaticResource ArtworkBorder}"
+                                                        HeightRequest="148" WidthRequest="148">
+                                                    <Image Source="{Binding ArtworkUrl}" Aspect="AspectFill"
+                                                           HeightRequest="148" WidthRequest="148" />
+                                                </Border>
+                                                <Button Text="⋯"
+                                                        HorizontalOptions="End" VerticalOptions="Start"
+                                                        Margin="0,6,6,0"
+                                                        BackgroundColor="#99000000"
+                                                        TextColor="White"
+                                                        CornerRadius="14"
+                                                        WidthRequest="28" HeightRequest="28"
+                                                        MinimumHeightRequest="28"
+                                                        Padding="0,-4,0,0"
+                                                        FontSize="18"
+                                                        FontFamily="OpenSansSemibold"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SubscriptionsViewModel}}, Path=ShowPodcastMenuCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                            </Grid>
                                             <Label Grid.Row="1" Style="{StaticResource H2}" Text="{Binding Title}"
                                                    FontSize="14" LineBreakMode="TailTruncation" MaxLines="2"
                                                    VerticalTextAlignment="Start" />
@@ -239,7 +256,7 @@
             </CollectionView.ItemTemplate>
 
             <CollectionView.Footer>
-                <BoxView HeightRequest="32" Color="Transparent" />
+                <BoxView HeightRequest="100" Color="Transparent" />
             </CollectionView.Footer>
         </CollectionView>
     </RefreshView>

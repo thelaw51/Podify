@@ -175,7 +175,7 @@ public partial class SubscriptionsViewModel : ObservableObject
          await Shell.Current.DisplayAlertAsync("Unsubscribe", $"Remove {podcast.Title}?", "Remove", "Cancel");
       if (!confirm) return;
       await _db.DeletePodcastAsync(podcast.Id);
-      Subscriptions.Remove(podcast);
+      await LoadAsync();
       OnPropertyChanged(nameof(HasSubscriptions));
    }
 
