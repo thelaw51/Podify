@@ -28,6 +28,10 @@
                        Text="{Binding Podcast.Description, Converter={StaticResource HtmlToPlainText}}"
                        TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}"
                        MaxLines="5" LineBreakMode="TailTruncation" />
+                <Button Style="{StaticResource GhostButton}"
+                        Text="⬆  Share"
+                        HorizontalOptions="Start"
+                        Command="{Binding ShareCommand}" />
                 <Border Style="{StaticResource Card}" Padding="14" IsVisible="{Binding IsPreview}">
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" VerticalOptions="Center">
                         <Label Grid.Column="0" Style="{StaticResource Caption}"

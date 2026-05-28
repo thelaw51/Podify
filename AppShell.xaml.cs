@@ -11,5 +11,6 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("episode", typeof(EpisodeDetailPage));
         Routing.RegisterRoute("queue", typeof(QueuePage));
         Routing.RegisterRoute("downloads", typeof(DownloadsPage));
+        Routing.RegisterRoute("settings", typeof(SettingsPage));
     }
 }

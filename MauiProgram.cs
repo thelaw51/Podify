@@ -76,6 +76,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<OpmlImportService>();
         builder.Services.AddSingleton<DownloadService>();
         builder.Services.AddSingleton<PlayerService>();
+        builder.Services.AddSingleton<SettingsService>();
 
         builder.Services.AddSingleton<SubscriptionsViewModel>();
         builder.Services.AddSingleton<DiscoverViewModel>();
@@ -84,6 +85,7 @@ public static class MauiProgram
         builder.Services.AddTransient<EpisodeDetailViewModel>();
         builder.Services.AddTransient<QueueViewModel>();
         builder.Services.AddTransient<DownloadsViewModel>();
+        builder.Services.AddTransient<SettingsViewModel>();
 
         builder.Services.AddSingleton<SubscriptionsPage>();
         builder.Services.AddSingleton<DiscoverPage>();
@@ -92,6 +94,7 @@ public static class MauiProgram
         builder.Services.AddTransient<EpisodeDetailPage>();
         builder.Services.AddTransient<QueuePage>();
         builder.Services.AddTransient<DownloadsPage>();
+        builder.Services.AddTransient<SettingsPage>();
 
         return builder.Build();
     }

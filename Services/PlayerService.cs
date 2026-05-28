@@ -18,10 +18,13 @@ public class PlayerService
     private static readonly TimeSpan SavePositionInterval = TimeSpan.FromSeconds(5);
     private IReadOnlyList<Chapter> _chapters = Array.Empty<Chapter>();
     private Chapter? _currentChapter;
+    private CancellationTokenSource? _sleepCts;
 
     public event EventHandler? StateChanged;
     public IReadOnlyList<Chapter> Chapters => _chapters;
     public Chapter? CurrentChapter => _currentChapter;
+    public TimeSpan SleepTimerRemaining { get; private set; } = TimeSpan.Zero;
+    public bool SleepTimerActive => _sleepCts is not null && !_sleepCts.IsCancellationRequested;
 
     public PlayerService(PodcastDatabase db)
     {
@@ -232,6 +235,59 @@ public class PlayerService
         }
         await _db.UpdateEpisodeAsync(episode);
         StateChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void StartSleepTimer(TimeSpan duration)
+    {
+        _sleepCts?.Cancel();
+        _sleepCts?.Dispose();
+        var cts = new CancellationTokenSource();
+        _sleepCts = cts;
+        SleepTimerRemaining = duration;
+        StateChanged?.Invoke(this, EventArgs.Empty);
+        _ = RunSleepTimerAsync(duration, cts);
+    }
+
+    public void CancelSleepTimer()
+    {
+        _sleepCts?.Cancel();
+        _sleepCts?.Dispose();
+        _sleepCts = null;
+        SleepTimerRemaining = TimeSpan.Zero;
+        StateChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private async Task RunSleepTimerAsync(TimeSpan duration, CancellationTokenSource cts)
+    {
+        var endTime = DateTime.UtcNow + duration;
+        try
+        {
+            while (!cts.Token.IsCancellationRequested)
+            {
+                await Task.Delay(1000, cts.Token);
+                SleepTimerRemaining = endTime - DateTime.UtcNow;
+                if (SleepTimerRemaining <= TimeSpan.Zero)
+                {
+                    SleepTimerRemaining = TimeSpan.Zero;
+                    break;
+                }
+                StateChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+            if (!cts.Token.IsCancellationRequested)
+            {
+                if (ReferenceEquals(_sleepCts, cts)) _sleepCts = null;
+                StateChanged?.Invoke(this, EventArgs.Empty);
+                MainThread.BeginInvokeOnMainThread(Pause);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        finally
+        {
+            if (ReferenceEquals(_sleepCts, cts)) _sleepCts = null;
+        }
     }
 
     private async Task PlayNextFromQueueAsync()

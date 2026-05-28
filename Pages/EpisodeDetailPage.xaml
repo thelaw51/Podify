@@ -12,7 +12,8 @@
 
     <Grid>
     <ScrollView>
-        <VerticalStackLayout Padding="20,12,20,100" Spacing="18">
+        <VerticalStackLayout Padding="20,12,20,100" Spacing="18"
+                             MaximumWidthRequest="680" HorizontalOptions="Center">
 
             <!-- Artwork -->
             <Border Style="{StaticResource ArtworkBorder}"
@@ -60,6 +61,12 @@
                     HorizontalOptions="Center"
                     IsVisible="{Binding IsPreview, Converter={StaticResource InverseBool}}"
                     Command="{Binding ToggleListenedCommand}" />
+
+            <!-- Share -->
+            <Button Style="{StaticResource GhostButton}"
+                    Text="⬆  Share"
+                    HorizontalOptions="Center"
+                    Command="{Binding ShareCommand}" />
 
             <!-- Preview hint -->
             <Label Style="{StaticResource Caption}"

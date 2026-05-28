@@ -145,6 +145,18 @@ public partial class EpisodeDetailViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public async Task ShareAsync()
+    {
+        if (Episode is null) return;
+        await Share.Default.RequestAsync(new ShareTextRequest
+        {
+            Title = Episode.Title,
+            Text = $"{Episode.Title}\n{Podcast?.Title}",
+            Uri = Episode.AudioUrl
+        });
+    }
+
+    [RelayCommand]
     public async Task JumpToChapterAsync(Chapter chapter)
     {
         if (Episode is null || chapter is null) return;

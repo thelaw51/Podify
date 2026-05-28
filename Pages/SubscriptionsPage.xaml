@@ -12,7 +12,7 @@
     ios:Page.UseSafeArea="False">
 
     <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshAllCommand}">
-        <CollectionView ItemsSource="{Binding Subscriptions}" SelectionMode="None"
+        <CollectionView ItemsSource="{Binding FilteredSubscriptions}" SelectionMode="None"
                         SizeChanged="OnCollectionSizeChanged">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout x:Name="AllShowsLayout" Orientation="Vertical" Span="2" HorizontalItemSpacing="12" VerticalItemSpacing="20" />
@@ -20,11 +20,24 @@
 
             <CollectionView.EmptyView>
                 <VerticalStackLayout Padding="40" Spacing="14" VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="🎧" FontSize="56" HorizontalOptions="Center" />
-                    <Label Style="{StaticResource H1}" Text="No podcasts yet" HorizontalOptions="Center" />
-                    <Label Style="{StaticResource Caption}"
-                           Text="Browse categories in Discover, search for a show, or import an OPML file from your old app."
-                           HorizontalTextAlignment="Center" />
+                    <!-- No subscriptions -->
+                    <VerticalStackLayout Spacing="14"
+                                         IsVisible="{Binding Source={RelativeSource AncestorType={x:Type vm:SubscriptionsViewModel}}, Path=NoSearchQuery}">
+                        <Label Text="🎧" FontSize="56" HorizontalOptions="Center" />
+                        <Label Style="{StaticResource H1}" Text="No podcasts yet" HorizontalOptions="Center" />
+                        <Label Style="{StaticResource Caption}"
+                               Text="Browse categories in Discover, search for a show, or import an OPML file from your old app."
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                    <!-- No search results -->
+                    <VerticalStackLayout Spacing="14"
+                                         IsVisible="{Binding Source={RelativeSource AncestorType={x:Type vm:SubscriptionsViewModel}}, Path=HasSearchQuery}">
+                        <Label Text="🔍" FontSize="56" HorizontalOptions="Center" />
+                        <Label Style="{StaticResource H1}" Text="No matches" HorizontalOptions="Center" />
+                        <Label Style="{StaticResource Caption}"
+                               Text="Try a different search term."
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
 
@@ -38,6 +51,9 @@
                             <Label Style="{StaticResource Display}" Text="Your Podcasts" />
                         </VerticalStackLayout>
                         <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                            <Button Style="{StaticResource SubtleButton}"
+                                    Text="⚙"
+                                    Command="{Binding OpenSettingsCommand}" />
                             <Button Style="{StaticResource SubtleButton}"
                                     Text="Downloads"
                                     Command="{Binding OpenDownloadsCommand}" />
@@ -215,6 +231,15 @@
 
                     <BoxView HeightRequest="1" Margin="20,0"
                              Color="{AppThemeBinding Light={StaticResource Divider}, Dark={StaticResource DividerDark}}" />
+
+                    <!-- In-library search -->
+                    <Border Margin="20,0" Padding="4"
+                            StrokeShape="RoundRectangle 14"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceMuted}, Dark={StaticResource SurfaceMutedDark}}">
+                        <SearchBar Placeholder="Search your shows…"
+                                   BackgroundColor="Transparent"
+                                   Text="{Binding SearchText}" />
+                    </Border>
 
                     <VerticalStackLayout Margin="20,0,20,6" Spacing="2">
                         <Label Style="{StaticResource Eyebrow}" Text="Browse" />

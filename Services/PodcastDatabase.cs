@@ -125,4 +125,21 @@ public class PodcastDatabase
       var db = await ConnectAsync();
       await db.ExecuteAsync("UPDATE Episode SET QueuePosition = -1 WHERE QueuePosition >= 0");
    }
+
+   public async Task<List<Episode>> GetPlayedEpisodesAsync()
+   {
+      var db = await ConnectAsync();
+      return await db.Table<Episode>().Where(e => e.IsPlayed).ToListAsync();
+   }
+
+   public async Task<(List<Podcast> Podcasts, List<Episode> Episodes)> SearchAsync(string query, int limit = 30)
+   {
+      var db = await ConnectAsync();
+      var like = $"%{query}%";
+      var podcasts = await db.QueryAsync<Podcast>(
+          "SELECT * FROM Podcast WHERE Title LIKE ? OR Author LIKE ? ORDER BY Title LIMIT ?", like, like, limit);
+      var episodes = await db.QueryAsync<Episode>(
+          "SELECT * FROM Episode WHERE Title LIKE ? ORDER BY Published DESC LIMIT ?", like, limit);
+      return (podcasts, episodes);
+   }
 }

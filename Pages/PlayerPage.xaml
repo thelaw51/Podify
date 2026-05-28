@@ -24,7 +24,7 @@
         </Style>
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="*,Auto,Auto,Auto,Auto" Padding="20,24,20,100" RowSpacing="22">
+    <Grid RowDefinitions="*,Auto,Auto,Auto,Auto,Auto" Padding="20,24,20,100" RowSpacing="22">
 
         <!-- Artwork hero -->
         <Border Grid.Row="0"
@@ -84,7 +84,7 @@
 
             <Button Grid.Column="1"
                     Style="{StaticResource SkipButton}"
-                    Text="15"
+                    Text="{Binding SkipBackSeconds}"
                     Command="{Binding SkipBackCommand}">
                 <Button.ImageSource>
                     <FontImageSource FontFamily="MaterialIcons"
@@ -108,7 +108,7 @@
 
             <Button Grid.Column="3"
                     Style="{StaticResource SkipButton}"
-                    Text="30"
+                    Text="{Binding SkipForwardSeconds}"
                     Command="{Binding SkipForwardCommand}">
                 <Button.ImageSource>
                     <FontImageSource FontFamily="MaterialIcons"
@@ -125,6 +125,13 @@
                     Command="{Binding OpenQueueCommand}" />
         </Grid>
 
-        <toolkit:MediaElement Grid.Row="4" x:Name="Media" IsVisible="False" HeightRequest="0" />
+        <!-- Sleep timer -->
+        <Button Grid.Row="4"
+                Style="{StaticResource SubtleButton}"
+                Text="{Binding SleepTimerLabel}"
+                HorizontalOptions="Center"
+                Command="{Binding SetSleepTimerCommand}" />
+
+        <toolkit:MediaElement Grid.Row="5" x:Name="Media" IsVisible="False" HeightRequest="0" />
     </Grid>
 </ContentPage>

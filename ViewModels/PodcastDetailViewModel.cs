@@ -112,6 +112,18 @@ public partial class PodcastDetailViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public async Task ShareAsync()
+    {
+        if (Podcast is null) return;
+        await Share.Default.RequestAsync(new ShareTextRequest
+        {
+            Title = Podcast.Title,
+            Text = $"Check out {Podcast.Title}",
+            Uri = Podcast.FeedUrl
+        });
+    }
+
+    [RelayCommand]
     public Task OpenEpisodeAsync(Episode episode)
     {
         if (episode is null) return Task.CompletedTask;

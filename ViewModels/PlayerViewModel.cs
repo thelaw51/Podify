@@ -9,7 +9,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 {
     private readonly PlayerService _player;
     private readonly PodcastDatabase _db;
+    private readonly SettingsService _settings;
     private string? _resolvedForEpisodeId;
+    private string? _lastEpisodeId;
 
     [ObservableProperty]
     private Episode? _current;
@@ -44,6 +46,18 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     public bool HasArtwork => !string.IsNullOrWhiteSpace(ArtworkUrl);
     public string CurrentChapterTitle => _player.CurrentChapter?.Title ?? string.Empty;
     public bool HasChapter => _player.CurrentChapter is not null;
+    public string SleepTimerLabel
+    {
+        get
+        {
+            if (!_player.SleepTimerActive) return "Sleep";
+            var r = _player.SleepTimerRemaining;
+            return r.TotalMinutes >= 1 ? $"Sleep {(int)r.TotalMinutes}m" : $"Sleep {r.Seconds}s";
+        }
+    }
+    public bool SleepTimerActive => _player.SleepTimerActive;
+    public int SkipForwardSeconds => (int)_settings.SkipForwardDuration.TotalSeconds;
+    public int SkipBackSeconds => (int)_settings.SkipBackDuration.TotalSeconds;
 
     partial void OnArtworkUrlChanged(string value) => OnPropertyChanged(nameof(HasArtwork));
     partial void OnIsPlayingChanged(bool value) => OnPropertyChanged(nameof(PlayPauseGlyph));
@@ -51,10 +65,11 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     public PlayerService Player => _player;
 
-    public PlayerViewModel(PlayerService player, PodcastDatabase db)
+    public PlayerViewModel(PlayerService player, PodcastDatabase db, SettingsService settings)
     {
         _player = player;
         _db = db;
+        _settings = settings;
         _player.StateChanged += OnPlayerStateChanged;
     }
 
@@ -62,7 +77,17 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     {
         MainThread.BeginInvokeOnMainThread(() =>
         {
-            Current = _player.CurrentEpisode;
+            var ep = _player.CurrentEpisode;
+
+            // Apply default speed when a new episode starts
+            if (ep?.Id != _lastEpisodeId)
+            {
+                _lastEpisodeId = ep?.Id;
+                if (ep is not null && _settings.DefaultSpeed != _player.Speed)
+                    _player.Speed = _settings.DefaultSpeed;
+            }
+
+            Current = ep;
             IsPlaying = _player.IsPlaying;
             OnPropertyChanged(nameof(PlayPauseLabel));
             Position = _player.Position;
@@ -76,6 +101,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
             Speed = _player.Speed;
             OnPropertyChanged(nameof(CurrentChapterTitle));
             OnPropertyChanged(nameof(HasChapter));
+            OnPropertyChanged(nameof(SleepTimerLabel));
+            OnPropertyChanged(nameof(SleepTimerActive));
+            OnPropertyChanged(nameof(SkipForwardSeconds));
+            OnPropertyChanged(nameof(SkipBackSeconds));
             _ = ResolveArtworkAsync();
         });
     }
@@ -133,10 +162,27 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     public void TogglePlayPause() => _player.TogglePlayPause();
 
     [RelayCommand]
-    public Task SkipForward() => _player.SkipForwardAsync(TimeSpan.FromSeconds(30));
+    public Task SkipForward() => _player.SkipForwardAsync(_settings.SkipForwardDuration);
 
     [RelayCommand]
-    public Task SkipBack() => _player.SkipBackAsync(TimeSpan.FromSeconds(15));
+    public Task SkipBack() => _player.SkipBackAsync(_settings.SkipBackDuration);
+
+    [RelayCommand]
+    public async Task SetSleepTimerAsync()
+    {
+        var destructive = _player.SleepTimerActive ? "Cancel timer" : null;
+        var choice = await Shell.Current.DisplayActionSheetAsync(
+            "Sleep timer", "Dismiss", destructive,
+            "15 minutes", "30 minutes", "45 minutes", "60 minutes");
+        switch (choice)
+        {
+            case "15 minutes": _player.StartSleepTimer(TimeSpan.FromMinutes(15)); break;
+            case "30 minutes": _player.StartSleepTimer(TimeSpan.FromMinutes(30)); break;
+            case "45 minutes": _player.StartSleepTimer(TimeSpan.FromMinutes(45)); break;
+            case "60 minutes": _player.StartSleepTimer(TimeSpan.FromMinutes(60)); break;
+            case "Cancel timer": _player.CancelSleepTimer(); break;
+        }
+    }
 
     [RelayCommand]
     public Task OpenQueueAsync() => Shell.Current.GoToAsync("queue");
