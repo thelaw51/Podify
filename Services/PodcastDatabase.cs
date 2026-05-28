@@ -119,4 +119,10 @@ public class PodcastDatabase
       return await db.Table<Episode>().Where(e => e.DownloadStatus == DownloadStatus.Downloaded)
          .OrderByDescending(e => e.Published).ToListAsync();
    }
+
+   public async Task ClearQueueAsync()
+   {
+      var db = await ConnectAsync();
+      await db.ExecuteAsync("UPDATE Episode SET QueuePosition = -1 WHERE QueuePosition >= 0");
+   }
 }

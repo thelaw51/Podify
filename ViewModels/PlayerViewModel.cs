@@ -139,6 +139,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     public Task SkipBack() => _player.SkipBackAsync(TimeSpan.FromSeconds(15));
 
     [RelayCommand]
+    public Task OpenQueueAsync() => Shell.Current.GoToAsync("queue");
+
+    [RelayCommand]
     public void CycleSpeed()
     {
         var next = Speed switch

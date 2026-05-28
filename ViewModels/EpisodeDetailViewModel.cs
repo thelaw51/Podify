@@ -30,6 +30,9 @@ public partial class EpisodeDetailViewModel : ObservableObject
     [ObservableProperty]
     private bool _isPreview;
 
+    [ObservableProperty]
+    private bool _isLoading;
+
     public bool IsPlayed => Episode?.IsPlayed ?? false;
     public bool IsQueued => (Episode?.QueuePosition ?? -1) >= 0;
     public string PlayedLabel => IsPlayed ? "Mark as unplayed" : "Mark as played";
@@ -70,26 +73,34 @@ public partial class EpisodeDetailViewModel : ObservableObject
     public async Task LoadAsync()
     {
         if (string.IsNullOrWhiteSpace(EpisodeId)) return;
-        var dbEpisode = await _db.GetEpisodeAsync(EpisodeId);
-        if (dbEpisode is not null)
+        IsLoading = true;
+        try
         {
-            Episode = dbEpisode;
-            Podcast = await _db.GetPodcastAsync(Episode.PodcastId);
-            IsPreview = false;
+            var dbEpisode = await _db.GetEpisodeAsync(EpisodeId);
+            if (dbEpisode is not null)
+            {
+                Episode = dbEpisode;
+                Podcast = await _db.GetPodcastAsync(Episode.PodcastId);
+                IsPreview = false;
+            }
+            else if (PreviewEpisodeCache.TryGet(EpisodeId, out var previewEp, out var previewPod))
+            {
+                Episode = previewEp;
+                Podcast = previewPod;
+                IsPreview = true;
+            }
+            else
+            {
+                return;
+            }
+            ArtworkUrl = !string.IsNullOrWhiteSpace(Episode!.ArtworkUrl)
+                ? Episode.ArtworkUrl
+                : Podcast?.ArtworkUrl ?? string.Empty;
         }
-        else if (PreviewEpisodeCache.TryGet(EpisodeId, out var previewEp, out var previewPod))
+        finally
         {
-            Episode = previewEp;
-            Podcast = previewPod;
-            IsPreview = true;
+            IsLoading = false;
         }
-        else
-        {
-            return;
-        }
-        ArtworkUrl = !string.IsNullOrWhiteSpace(Episode!.ArtworkUrl)
-            ? Episode.ArtworkUrl
-            : Podcast?.ArtworkUrl ?? string.Empty;
     }
 
     [RelayCommand]

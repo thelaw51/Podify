@@ -10,6 +10,7 @@
     Title="{Binding Podcast.Title}"
     ios:Page.UseSafeArea="False">
 
+    <Grid>
     <CollectionView ItemsSource="{Binding Episodes}" SelectionMode="None">
         <CollectionView.Header>
             <VerticalStackLayout Spacing="14" Padding="20,12,20,20">
@@ -75,4 +76,7 @@
             <BoxView HeightRequest="100" Color="Transparent" />
         </CollectionView.Footer>
     </CollectionView>
+    <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                       VerticalOptions="Center" HorizontalOptions="Center" />
+    </Grid>
 </ContentPage>

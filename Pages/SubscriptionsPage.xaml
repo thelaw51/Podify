@@ -37,11 +37,14 @@
                             <Label Style="{StaticResource Eyebrow}" Text="Library" />
                             <Label Style="{StaticResource Display}" Text="Your Podcasts" />
                         </VerticalStackLayout>
-                        <Button Grid.Column="1"
-                                Style="{StaticResource SubtleButton}"
-                                Text="Import OPML"
-                                VerticalOptions="Center"
-                                Command="{Binding ImportOpmlCommand}" />
+                        <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                            <Button Style="{StaticResource SubtleButton}"
+                                    Text="Downloads"
+                                    Command="{Binding OpenDownloadsCommand}" />
+                            <Button Style="{StaticResource SubtleButton}"
+                                    Text="Import OPML"
+                                    Command="{Binding ImportOpmlCommand}" />
+                        </HorizontalStackLayout>
                     </Grid>
 
                     <!-- Import progress -->

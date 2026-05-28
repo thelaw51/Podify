@@ -10,6 +10,7 @@
     Title="Episode"
     ios:Page.UseSafeArea="False">
 
+    <Grid>
     <ScrollView>
         <VerticalStackLayout Padding="20,12,20,100" Spacing="18">
 
@@ -105,4 +106,7 @@
 
         </VerticalStackLayout>
     </ScrollView>
+    <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                       VerticalOptions="Center" HorizontalOptions="Center" />
+    </Grid>
 </ContentPage>

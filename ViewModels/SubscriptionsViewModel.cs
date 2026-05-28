@@ -138,6 +138,7 @@ public partial class SubscriptionsViewModel : ObservableObject
       _lastAutoRefresh = DateTime.UtcNow;
       try
       {
+         var failures = 0;
          foreach (var pod in Subscriptions.ToList())
          {
             try
@@ -149,10 +150,13 @@ public partial class SubscriptionsViewModel : ObservableObject
             }
             catch
             {
+               failures++;
             }
          }
 
          await LoadAsync();
+         if (failures > 0)
+            await Shell.Current.DisplayAlertAsync("Refresh", $"{failures} podcast{(failures == 1 ? "" : "s")} couldn't be refreshed.", "OK");
       }
       finally
       {
@@ -194,6 +198,9 @@ public partial class SubscriptionsViewModel : ObservableObject
             break;
       }
    }
+
+   [RelayCommand]
+   public Task OpenDownloadsAsync() => Shell.Current.GoToAsync("downloads");
 
    [RelayCommand]
    public async Task ImportOpmlAsync()

@@ -31,6 +31,9 @@ public partial class PodcastDetailViewModel : ObservableObject
     [ObservableProperty]
     private bool _isPreview;
 
+    [ObservableProperty]
+    private bool _isLoading;
+
     public PodcastDetailViewModel(PodcastDatabase db, PlayerService player, DownloadService downloads, RssFeedService rss)
     {
         _db = db;
@@ -47,15 +50,24 @@ public partial class PodcastDetailViewModel : ObservableObject
     public async Task LoadAsync()
     {
         if (string.IsNullOrWhiteSpace(PodcastId)) return;
-        Podcast = await _db.GetPodcastAsync(PodcastId);
-        var eps = await _db.GetEpisodesAsync(PodcastId);
-        Episodes = new ObservableCollection<Episode>(eps);
-        IsPreview = false;
+        IsLoading = true;
+        try
+        {
+            Podcast = await _db.GetPodcastAsync(PodcastId);
+            var eps = await _db.GetEpisodesAsync(PodcastId);
+            Episodes = new ObservableCollection<Episode>(eps);
+            IsPreview = false;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     private async Task LoadPreviewAsync()
     {
         if (string.IsNullOrWhiteSpace(PreviewFeedUrl)) return;
+        IsLoading = true;
         try
         {
             var (podcast, episodes) = await _rss.FetchAsync(PreviewFeedUrl);
@@ -67,6 +79,10 @@ public partial class PodcastDetailViewModel : ObservableObject
         catch (Exception ex)
         {
             await Shell.Current.DisplayAlertAsync("Couldn't load preview", ex.Message, "OK");
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 

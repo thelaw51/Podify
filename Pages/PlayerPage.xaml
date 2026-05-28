@@ -117,6 +117,12 @@
                                      Color="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}" />
                 </Button.ImageSource>
             </Button>
+
+            <Button Grid.Column="4"
+                    Style="{StaticResource SubtleButton}"
+                    Text="Queue"
+                    HorizontalOptions="End"
+                    Command="{Binding OpenQueueCommand}" />
         </Grid>
 
         <toolkit:MediaElement Grid.Row="4" x:Name="Media" IsVisible="False" HeightRequest="0" />

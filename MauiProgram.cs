@@ -82,12 +82,16 @@ public static class MauiProgram
         builder.Services.AddSingleton<PlayerViewModel>();
         builder.Services.AddTransient<PodcastDetailViewModel>();
         builder.Services.AddTransient<EpisodeDetailViewModel>();
+        builder.Services.AddTransient<QueueViewModel>();
+        builder.Services.AddTransient<DownloadsViewModel>();
 
         builder.Services.AddSingleton<SubscriptionsPage>();
         builder.Services.AddSingleton<DiscoverPage>();
         builder.Services.AddSingleton<PlayerPage>();
         builder.Services.AddTransient<PodcastDetailPage>();
         builder.Services.AddTransient<EpisodeDetailPage>();
+        builder.Services.AddTransient<QueuePage>();
+        builder.Services.AddTransient<DownloadsPage>();
 
         return builder.Build();
     }

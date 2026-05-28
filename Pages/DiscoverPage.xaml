@@ -124,6 +124,11 @@
                         <Button Grid.Column="1" Style="{StaticResource SubtleButton}" Text="Clear" Command="{Binding ClearSearchCommand}" />
                     </Grid>
                     <ActivityIndicator IsRunning="{Binding IsSearching}" IsVisible="{Binding IsSearching}" />
+                    <Label Style="{StaticResource Caption}"
+                           Text="No results found."
+                           HorizontalOptions="Center"
+                           Margin="0,8,0,0"
+                           IsVisible="{Binding HasNoResults}" />
                 </VerticalStackLayout>
 
             </VerticalStackLayout>

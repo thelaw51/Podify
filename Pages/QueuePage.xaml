@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Podify.Pages.QueuePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Podify.ViewModels"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    x:DataType="vm:QueueViewModel"
+    Title="Up Next"
+    ios:Page.UseSafeArea="False">
+
+    <Grid>
+        <CollectionView ItemsSource="{Binding Queue}" SelectionMode="None">
+
+            <CollectionView.Header>
+                <Grid Padding="20,16,20,12" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Style="{StaticResource Eyebrow}" Text="Playback" />
+                        <Label Style="{StaticResource Display}" Text="Up Next" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1"
+                            Style="{StaticResource SubtleButton}"
+                            Text="Clear all"
+                            VerticalOptions="Center"
+                            IsVisible="{Binding HasQueue}"
+                            Command="{Binding ClearQueueCommand}" />
+                </Grid>
+            </CollectionView.Header>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="40" Spacing="14" VerticalOptions="Center" HorizontalOptions="Center"
+                                     IsVisible="{Binding Source={RelativeSource AncestorType={x:Type vm:QueueViewModel}}, Path=IsLoading, Converter={StaticResource InverseBool}}">
+                    <Label Text="📋" FontSize="56" HorizontalOptions="Center" />
+                    <Label Style="{StaticResource H1}" Text="Queue is empty" HorizontalOptions="Center" />
+                    <Label Style="{StaticResource Caption}"
+                           Text="Add episodes from any podcast to play them in order."
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:QueueItem">
+                    <Border Style="{StaticResource Card}" Margin="16,4,16,8" Padding="14">
+                        <Grid ColumnDefinitions="56,*,Auto" ColumnSpacing="12">
+                            <Border Grid.Column="0" Style="{StaticResource ArtworkBorder}"
+                                    HeightRequest="56" WidthRequest="56">
+                                <Image Source="{Binding ArtworkUrl}" Aspect="AspectFill"
+                                       HeightRequest="56" WidthRequest="56" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
+                                <Label Style="{StaticResource Caption}" Text="{Binding PodcastTitle}"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Style="{StaticResource H2}" FontSize="15" Text="{Binding Episode.Title}"
+                                       LineBreakMode="TailTruncation" MaxLines="2" />
+                                <Label Style="{StaticResource Caption}" Text="{Binding DurationLabel}" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="6">
+                                <Button Text="▶"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:QueueViewModel}}, Path=PlayFromHereCommand}"
+                                        CommandParameter="{Binding .}"
+                                        WidthRequest="44" HeightRequest="44"
+                                        Padding="0"
+                                        FontSize="16"
+                                        CornerRadius="22" />
+                                <Button Style="{StaticResource SubtleButton}"
+                                        Text="Remove"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:QueueViewModel}}, Path=RemoveFromQueueCommand}"
+                                        CommandParameter="{Binding .}"
+                                        FontSize="11"
+                                        HeightRequest="32"
+                                        MinimumHeightRequest="32"
+                                        Padding="10,0" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.Footer>
+                <BoxView HeightRequest="100" Color="Transparent" />
+            </CollectionView.Footer>
+
+        </CollectionView>
+
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                           VerticalOptions="Center" HorizontalOptions="Center" />
+    </Grid>
+</ContentPage>

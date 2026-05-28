@@ -58,6 +58,7 @@ public partial class DiscoverViewModel : ObservableObject
     [ObservableProperty] private string _query = string.Empty;
     [ObservableProperty] private bool _isSearching;
     [ObservableProperty] private bool _hasSearchResults;
+    [ObservableProperty] private bool _hasNoResults;
 
     [ObservableProperty]
     private ObservableCollection<DiscoverItem> _results = new();
@@ -161,20 +162,25 @@ public partial class DiscoverViewModel : ObservableObject
         {
             Results = new ObservableCollection<DiscoverItem>();
             HasSearchResults = false;
+            HasNoResults = false;
             return;
         }
         IsSearching = true;
+        HasNoResults = false;
         try
         {
             var hits = await _search.SearchAsync(Query);
             Results = new ObservableCollection<DiscoverItem>(
                 hits.Select(r => new DiscoverItem(r, _subscribedFeedUrls.Contains(r.FeedUrl))));
             HasSearchResults = true;
+            HasNoResults = hits.Count == 0;
         }
-        catch
+        catch (Exception ex)
         {
             Results = new ObservableCollection<DiscoverItem>();
-            HasSearchResults = true;
+            HasSearchResults = false;
+            HasNoResults = false;
+            await Shell.Current.DisplayAlertAsync("Search failed", ex.Message, "OK");
         }
         finally
         {
@@ -188,6 +194,7 @@ public partial class DiscoverViewModel : ObservableObject
         Query = string.Empty;
         Results = new ObservableCollection<DiscoverItem>();
         HasSearchResults = false;
+        HasNoResults = false;
     }
 
     [RelayCommand]
